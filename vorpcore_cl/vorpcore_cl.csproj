@@ -14,6 +14,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MenuAPI.RedM" Version="3.2.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="CitizenFX.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\binaries\Client\CitizenFX.Core.dll</HintPath>
     </Reference>

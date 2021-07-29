@@ -120,7 +120,7 @@ namespace vorpcore_sv.Scripts
                     {
                         inventory = result[0].inventory;
                     }
-                    LoadCharacter.characters[sid] = new Character(sid, result[0].group.ToString(), result[0].job.ToString(), result[0].jobgrade.ToString(), result[0].firstname.ToString(), result[0].lastname.ToString(), inventory, result[0].status.ToString(), result[0].coords.ToString(), double.Parse(result[0].money.ToString()), double.Parse(result[0].gold.ToString()), double.Parse(result[0].rol.ToString()), int.Parse(result[0].xp.ToString()), Convert.ToBoolean(result[0].isdead.ToString()));
+                    LoadCharacter.characters[sid] = new Character(sid, result[0].group.ToString(), result[0].job.ToString(), result[0].jobgrade.ToString(), result[0].firstname.ToString(), result[0].lastname.ToString(), inventory, result[0].status.ToString(), result[0].coords.ToString(), double.Parse(result[0].money.ToString()), double.Parse(result[0].gold.ToString()), double.Parse(result[0].rol.ToString()), int.Parse(result[0].xp.ToString()), Convert.ToBoolean(result[0].isdead.ToString()), result[0].skin.ToString(), result[0].comps.ToString());
                 }
             }));
         }
