@@ -19,19 +19,6 @@
         "runtime": {
           "lib/net45/Newtonsoft.Json.dll": {}
         }
-      },
-      "vorpcore_sv.net/1.0.0": {
-        "type": "project",
-        "framework": ".NETFramework,Version=v4.5.2",
-        "dependencies": {
-          "Newtonsoft.Json": "13.0.1"
-        },
-        "compile": {
-          "bin/placeholder/vorpcore_sv.net.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/vorpcore_sv.net.dll": {}
-        }
       }
     }
   },
@@ -74,18 +61,12 @@
         "newtonsoft.json.nuspec",
         "packageIcon.png"
       ]
-    },
-    "vorpcore_sv.net/1.0.0": {
-      "type": "project",
-      "path": "../vorpcore_sv/vorpcore_sv.csproj",
-      "msbuildProject": "../vorpcore_sv/vorpcore_sv.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.5.2": [
       "MenuAPI.RedM >= 3.2.2",
-      "Newtonsoft.Json >= 13.0.1",
-      "vorpcore_sv.net >= 1.0.0"
+      "Newtonsoft.Json >= 13.0.1"
     ]
   },
   "packageFolders": {
@@ -95,7 +76,7 @@
     "version": "1.0.0",
     "restore": {
       "projectUniqueName": "G:\\Source\\Wasteland\\Wasteland\\VORP-Core\\vorpcore_cl\\vorpcore_cl.csproj",
-      "projectName": "vorpcore_cl.net",
+      "projectName": "vorpinputs_cl.net",
       "projectPath": "G:\\Source\\Wasteland\\Wasteland\\VORP-Core\\vorpcore_cl\\vorpcore_cl.csproj",
       "packagesPath": "C:\\Users\\nicks\\.nuget\\packages\\",
       "outputPath": "G:\\Source\\Wasteland\\Wasteland\\VORP-Core\\vorpcore_cl\\obj\\",
@@ -115,11 +96,7 @@
       "frameworks": {
         "net452": {
           "targetAlias": "net452",
-          "projectReferences": {
-            "G:\\Source\\Wasteland\\Wasteland\\VORP-Core\\vorpcore_sv\\vorpcore_sv.csproj": {
-              "projectPath": "G:\\Source\\Wasteland\\Wasteland\\VORP-Core\\vorpcore_sv\\vorpcore_sv.csproj"
-            }
-          }
+          "projectReferences": {}
         }
       },
       "warningProperties": {
