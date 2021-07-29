@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "ZQQvfO5OKmHAsGBfGxwr7WZq6zWEsuqHnCLhpdl2a6tNqdQiCzKiCl8uDXNJCqLK9aSF/e2LvQhNM73hhaLTMg==",
+  "success": true,
+  "projectFilePath": "G:\\Source\\Wasteland\\Wasteland\\VORP-Core\\vorpcore_cl\\vorpcore_cl.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\nicks\\.nuget\\packages\\menuapi.redm\\3.2.2\\menuapi.redm.3.2.2.nupkg.sha512",
+    "C:\\Users\\nicks\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
