@@ -52,10 +52,18 @@ namespace vorpcore_sv.Utils
                 cb.Invoke(corefunctions);
             });
         }
+
+        private ApiController(bool asHelper)
+        {
+            if (!asHelper)
+            {
+                throw new InvalidOperationException($"{nameof(asHelper)} must be true if initialization was intended");
+            }
+        }
+        
         public static Dictionary<string, dynamic> getUser(int source)
         {
-            PlayerList p = new PlayerList();
-            string steam = "steam:" + p[source].Identifiers["steam"];
+            string steam = "steam:" + new ApiController(true).Players[source].Identifiers["steam"];
             if (LoadUsers._users.ContainsKey(steam))
             {
                 return LoadUsers._users[steam].GetUser();
@@ -68,9 +76,8 @@ namespace vorpcore_sv.Utils
 
         public static Dictionary<string, Dictionary<string, dynamic>> getConnectedUsers()
         {
-            PlayerList p = new PlayerList();
             Dictionary<string, Dictionary<string, dynamic>> UsersDictionary = new Dictionary<string, Dictionary<string, dynamic>>();
-            foreach(Player player in p)
+            foreach(Player player in new ApiController(true).Players)
             {
                 string steam = "steam:"+player.Identifiers["steam"];
                 if (LoadUsers._users.ContainsKey(steam) && !UsersDictionary.ContainsKey(steam))
@@ -87,8 +94,7 @@ namespace vorpcore_sv.Utils
 
             try
             {
-                PlayerList pl = new PlayerList();
-                p = pl[handle];
+                p = new ApiController(true).Players[handle];
             }
             catch (Exception ex)
             {
