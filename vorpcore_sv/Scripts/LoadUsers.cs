@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using vorpcore_sv.Class;
@@ -9,18 +7,19 @@ using vorpcore_sv.Utils;
 
 namespace vorpcore_sv.Scripts
 {
-    public class LoadUsers:BaseScript
+    public class LoadUsers : BaseScript
     {
         public static Dictionary<string, User> _users;
         public static List<string> _whitelist;
         public static bool _usingWhitelist;
+
         public LoadUsers()
         {
             EventHandlers["playerConnecting"] += new Action<Player, string, dynamic, dynamic>(OnPlayerConnecting);
             EventHandlers["vorp:playerSpawn"] += new Action<Player>(PlayerSpawnFunction);
-            EventHandlers["vorp:getUser"] += new Action<int,CallbackDelegate>((source,cb) =>
+            EventHandlers["vorp:getUser"] += new Action<int, CallbackDelegate>((source, cb) =>
             {
-                string steam = "steam:" + Players[source].Identifiers["steam"];
+                var steam = "steam:" + Players[source].Identifiers["steam"];
                 if (_users.ContainsKey(steam))
                 {
                     cb.Invoke(_users[steam].GetUser());
@@ -35,31 +34,33 @@ namespace vorpcore_sv.Scripts
         private async Task SaveUsersInServer()
         {
             await Delay(300000);
-            foreach (KeyValuePair<string,User> user in _users)
+            foreach (var user in _users)
             {
                 await Delay(1000);
                 user.Value.SaveUser();
             }
         }
-        
-        private void OnPlayerDropped([FromSource]Player player, string reason)
+
+        private void OnPlayerDropped([FromSource] Player player, string reason)
         {
             Debug.WriteLine($"Player {player.Name} dropped (Reason: {reason}).");
-            string identifier = "steam:" + player.Identifiers["steam"];
+            var identifier = "steam:" + player.Identifiers["steam"];
             SaveCoordsDB.LastCoordsInCache.Remove(player);
             if (_users.ContainsKey(identifier))
             {
                 _users[identifier].SaveUser();
                 _users.Remove(identifier);
             }
+
             Debug.WriteLine($"Saved player {player.Name}.");
         }
 
-        private async void LoadUser([FromSource]Player source,dynamic setKickReason,dynamic deferrals)
+        private async void LoadUser([FromSource] Player source, dynamic setKickReason, dynamic deferrals)
         {
-            string identifier = "steam:" + source.Identifiers["steam"];
-            string license = "license:" + source.Identifiers["license"];
-            List<object> resultList = await Exports["ghmattimysql"].executeSync("SELECT * FROM users WHERE identifier = ?", new[] {identifier});
+            var identifier = "steam:" + source.Identifiers["steam"];
+            var license = "license:" + source.Identifiers["license"];
+            List<object> resultList = await Exports["ghmattimysql"]
+                    .executeSync("SELECT * FROM users WHERE identifier = ?", new[] { identifier });
             if (resultList.Count > 0)
             {
                 IDictionary<string, object> user = (dynamic)resultList[0];
@@ -68,14 +69,15 @@ namespace vorpcore_sv.Scripts
                     deferrals.done(LoadConfig.Langs["BannedUser"]);
                     setKickReason(LoadConfig.Langs["BannedUser"]);
                 }
-                User newUser = new User(identifier, user["group"].ToString(),(int)user["warnings"], license);
+
+                var newUser = new User(identifier, user["group"].ToString(), (int)user["warnings"], license);
                 if (_users.ContainsKey(identifier))
                 {
                     _users[identifier] = newUser;
                 }
                 else
                 {
-                    _users.Add(identifier,newUser);
+                    _users.Add(identifier, newUser);
                 }
 
                 deferrals.done();
@@ -83,24 +85,27 @@ namespace vorpcore_sv.Scripts
             else
             {
                 //New User
-                await Exports["ghmattimysql"].executeSync("INSERT INTO users VALUES(?,'user',0,0)", new[] {identifier});
-                User newUser = new User(identifier, "user", 0, license);
+                await Exports["ghmattimysql"]
+                        .executeSync("INSERT INTO users VALUES(?,'user',0,0)", new[] { identifier });
+                var newUser = new User(identifier, "user", 0, license);
                 if (_users.ContainsKey(identifier))
                 {
                     _users[identifier] = newUser;
                 }
                 else
                 {
-                    _users.Add(identifier,newUser);
+                    _users.Add(identifier, newUser);
                 }
+
                 deferrals.done();
             }
         }
-        
-        private async void OnPlayerConnecting([FromSource]Player source, string playerName, dynamic setKickReason, dynamic deferrals)
+
+        private async void OnPlayerConnecting([FromSource] Player source, string playerName, dynamic setKickReason,
+                                              dynamic deferrals)
         {
             deferrals.defer();
-            bool _userEntering = false;
+            var _userEntering = false;
 
             await Delay(0);
 
@@ -113,7 +118,8 @@ namespace vorpcore_sv.Scripts
 
             deferrals.update(LoadConfig.Langs["CheckingIdentifier"]);
 
-            if (String.IsNullOrEmpty(source.Identifiers["steam"]) || source.Identifiers["steam"].Length < 5 || source.Identifiers["steam"] == null)
+            if (string.IsNullOrEmpty(source.Identifiers["steam"]) || source.Identifiers["steam"].Length < 5 ||
+                source.Identifiers["steam"] == null)
             {
                 deferrals.done(LoadConfig.Langs["NoSteam"]);
                 setKickReason(LoadConfig.Langs["NoSteam"]);
@@ -138,8 +144,6 @@ namespace vorpcore_sv.Scripts
                 _userEntering = true;
             }
 
-            
-
             if (_userEntering)
             {
                 deferrals.update(LoadConfig.Langs["LoadingUser"]);
@@ -150,7 +154,7 @@ namespace vorpcore_sv.Scripts
                 }
                 else
                 {
-                    LoadUser(source,setKickReason,deferrals);
+                    LoadUser(source, setKickReason, deferrals);
                 }
             }
         }
@@ -159,7 +163,7 @@ namespace vorpcore_sv.Scripts
         {
             try
             {
-                foreach (Player p in Players)
+                foreach (var p in Players)
                 {
                     if (p.Identifiers["steam"] != null)
                     {
@@ -169,9 +173,10 @@ namespace vorpcore_sv.Scripts
                         }
                     }
                 }
+
                 return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
                 return false;
@@ -180,14 +185,14 @@ namespace vorpcore_sv.Scripts
 
         private void PlayerSpawnFunction([FromSource] Player source)
         {
-            string steam = "steam:" + source.Identifiers["steam"];
+            var steam = "steam:" + source.Identifiers["steam"];
             if (_users.ContainsKey(steam))
             {
-                Debug.WriteLine("Characters loaded "+_users[steam].Numofcharacters);
+                Debug.WriteLine("Characters loaded " + _users[steam].Numofcharacters);
                 _users[steam].Source = int.Parse(source.Handle);
                 if (_users[steam].Numofcharacters <= 0)
                 {
-                    TriggerEvent("vorp_CreateNewCharacter",int.Parse(source.Handle));
+                    TriggerEvent("vorp_CreateNewCharacter", int.Parse(source.Handle));
                 }
                 else
                 {
@@ -198,7 +203,7 @@ namespace vorpcore_sv.Scripts
                     else
                     {
                         TriggerEvent("vorp_GoToSelectionMenu", int.Parse(source.Handle));
-                    }    
+                    }
                 }
             }
         }

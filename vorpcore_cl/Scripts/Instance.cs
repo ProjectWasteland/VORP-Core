@@ -1,13 +1,13 @@
-﻿using CitizenFX.Core;
+﻿using System;
+using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using System;
-using System.Threading.Tasks;
 
 namespace vorpcore_cl.Scripts
 {
     public class Instance : BaseScript
     {
         private static bool intancePlayer = false;
+
         public Instance()
         {
             EventHandlers["vorp:setInstancePlayer"] += new Action<bool>(SetInstancePlayer);
@@ -15,7 +15,6 @@ namespace vorpcore_cl.Scripts
 
         private void SetInstancePlayer(bool instance)
         {
-            
             switch (instance)
             {
                 case true:

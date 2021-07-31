@@ -1,32 +1,31 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using vorpcore_sv.Utils;
 
 namespace vorpcore_sv.Scripts
 {
-    class Commands : BaseScript
+    internal class Commands : BaseScript
     {
         public Commands()
         {
-
             TriggerEvent("chat:addSuggestion", "/setgroup", "set group to user\n Example: /setgroup playerid mod");
             API.RegisterCommand("setgroup", new Action<int, List<object>, string>((source, args, rawCommand) =>
             {
                 if (source > 0) // it's a player.
                 {
-                    Player _source = ApiController.getSource(source);
-                    TriggerEvent("vorp:getCharacter", source, new Action<dynamic>((user) =>
+                    var _source = ApiController.getSource(source);
+                    TriggerEvent("vorp:getCharacter", source, new Action<dynamic>(user =>
                     {
                         if (user.group == "admin")
                         {
                             try
                             {
-                                int target = int.Parse(args[0].ToString());
-                                string newgroup = args[1].ToString();
+                                var target = int.Parse(args[0].ToString());
+                                var newgroup = args[1].ToString();
 
-                                if (String.IsNullOrEmpty(newgroup))
+                                if (string.IsNullOrEmpty(newgroup))
                                 {
                                     _source.TriggerEvent("vorp:Tip", "ERROR: Use Correct Sintaxis", 4000);
                                     return;
@@ -50,10 +49,10 @@ namespace vorpcore_sv.Scripts
                 {
                     try
                     {
-                        int target = int.Parse(args[0].ToString());
-                        string newgroup = args[1].ToString();
+                        var target = int.Parse(args[0].ToString());
+                        var newgroup = args[1].ToString();
 
-                        if (String.IsNullOrEmpty(newgroup))
+                        if (string.IsNullOrEmpty(newgroup))
                         {
                             Debug.WriteLine("ERROR: Use Correct Sintaxis");
                             return;
@@ -74,17 +73,17 @@ namespace vorpcore_sv.Scripts
             {
                 if (source > 0) // it's a player.
                 {
-                    Player _source = ApiController.getSource(source);
-                    TriggerEvent("vorp:getCharacter", source, new Action<dynamic>((user) =>
+                    var _source = ApiController.getSource(source);
+                    TriggerEvent("vorp:getCharacter", source, new Action<dynamic>(user =>
                     {
                         if (user.group == "admin")
                         {
                             try
                             {
-                                int target = int.Parse(args[0].ToString());
-                                string newjob = args[1].ToString();
+                                var target = int.Parse(args[0].ToString());
+                                var newjob = args[1].ToString();
 
-                                if (String.IsNullOrEmpty(newjob))
+                                if (string.IsNullOrEmpty(newjob))
                                 {
                                     _source.TriggerEvent("vorp:Tip", "ERROR: Use Correct Sintaxis", 4000);
                                     return;
@@ -108,10 +107,10 @@ namespace vorpcore_sv.Scripts
                 {
                     try
                     {
-                        int target = int.Parse(args[0].ToString());
-                        string newjob = args[1].ToString();
+                        var target = int.Parse(args[0].ToString());
+                        var newjob = args[1].ToString();
 
-                        if (String.IsNullOrEmpty(newjob))
+                        if (string.IsNullOrEmpty(newjob))
                         {
                             Debug.WriteLine("vorp:Tip", "ERROR: Use Correct Sintaxis");
                             return;
@@ -127,22 +126,23 @@ namespace vorpcore_sv.Scripts
                 }
             }), false);
 
-            TriggerEvent("chat:addSuggestion", "/addmoney", "add money to user\n Example: /addmoney playerid moneytype quantity");
+            TriggerEvent("chat:addSuggestion", "/addmoney",
+                         "add money to user\n Example: /addmoney playerid moneytype quantity");
             API.RegisterCommand("addmoney", new Action<int, List<object>, string>((source, args, rawCommand) =>
             {
                 if (source > 0) // it's a player.
                 {
-                    Player _source = ApiController.getSource(source);
+                    var _source = ApiController.getSource(source);
 
-                    TriggerEvent("vorp:getCharacter", source, new Action<dynamic>((user) =>
+                    TriggerEvent("vorp:getCharacter", source, new Action<dynamic>(user =>
                     {
                         if (user.group == "admin")
                         {
                             try
                             {
-                                int target = int.Parse(args[0].ToString());
-                                int montype = int.Parse(args[1].ToString());
-                                double quantity = double.Parse(args[2].ToString());
+                                var target = int.Parse(args[0].ToString());
+                                var montype = int.Parse(args[1].ToString());
+                                var quantity = double.Parse(args[2].ToString());
 
                                 TriggerEvent("vorp:addMoney", target, montype, quantity);
                                 _source.TriggerEvent("vorp:Tip", $"Added {quantity} to {target}", 4000);
@@ -163,9 +163,9 @@ namespace vorpcore_sv.Scripts
                     Debug.WriteLine("This only can be executed from client side.");
                     try
                     {
-                        int target = int.Parse(args[0].ToString());
-                        int montype = int.Parse(args[1].ToString());
-                        double quantity = double.Parse(args[2].ToString());
+                        var target = int.Parse(args[0].ToString());
+                        var montype = int.Parse(args[1].ToString());
+                        var quantity = double.Parse(args[2].ToString());
 
                         TriggerEvent("vorp:addMoney", target, montype, quantity);
                         Debug.WriteLine($"Added {quantity} to {target}");
@@ -177,21 +177,22 @@ namespace vorpcore_sv.Scripts
                 }
             }), false);
 
-            TriggerEvent("chat:addSuggestion", "/delmoney", "remove money to user\n Example: /delmoney playerid moneytype quantity");
+            TriggerEvent("chat:addSuggestion", "/delmoney",
+                         "remove money to user\n Example: /delmoney playerid moneytype quantity");
             API.RegisterCommand("delmoney", new Action<int, List<object>, string>((source, args, rawCommand) =>
             {
                 if (source > 0) //it's a player.
                 {
-                    Player _source = ApiController.getSource(source);
-                    TriggerEvent("vorp:getCharacter", source, new Action<dynamic>((user) =>
+                    var _source = ApiController.getSource(source);
+                    TriggerEvent("vorp:getCharacter", source, new Action<dynamic>(user =>
                     {
                         if (user.group == "admin")
                         {
                             try
                             {
-                                int target = int.Parse(args[0].ToString());
-                                int montype = int.Parse(args[1].ToString());
-                                double quantity = double.Parse(args[2].ToString());
+                                var target = int.Parse(args[0].ToString());
+                                var montype = int.Parse(args[1].ToString());
+                                var quantity = double.Parse(args[2].ToString());
 
                                 TriggerEvent("vorp:removeMoney", target, montype, quantity);
                                 _source.TriggerEvent("vorp:Tip", $"Removed {quantity} from {target}", 4000);
@@ -211,9 +212,9 @@ namespace vorpcore_sv.Scripts
                 {
                     try
                     {
-                        int target = int.Parse(args[0].ToString());
-                        int montype = int.Parse(args[1].ToString());
-                        double quantity = double.Parse(args[2].ToString());
+                        var target = int.Parse(args[0].ToString());
+                        var montype = int.Parse(args[1].ToString());
+                        var quantity = double.Parse(args[2].ToString());
 
                         TriggerEvent("vorp:removeMoney", target, montype, quantity);
                         Debug.WriteLine($"Removed {quantity} from {target}");
@@ -229,28 +230,34 @@ namespace vorpcore_sv.Scripts
             API.RegisterCommand("addwhitelist", new Action<int, List<object>, string>((source, args, rawCommand) =>
             {
                 if (source > 0) // it's a player.
-                 {
-                    Player _source = ApiController.getSource(source);
-                    TriggerEvent("vorp:getCharacter", source, new Action<dynamic>((user) =>
+                {
+                    var _source = ApiController.getSource(source);
+                    TriggerEvent("vorp:getCharacter", source, new Action<dynamic>(user =>
                     {
                         if (user.group == "admin" || user.group == "mod")
                         {
                             try
                             {
-                                string steamId = args[0].ToString();
-                                Exports["ghmattimysql"].execute("SELECT * FROM whitelist WHERE identifier = ?", new[] { steamId }, new Action<dynamic>((result) =>
-                                {
-                                    if (result.Count == 0)
-                                    {
-                                        Exports["ghmattimysql"].execute("INSERT INTO whitelist (`identifier`) VALUES (?)", new object[] { steamId });
-                                        LoadUsers._whitelist.Add(steamId);
-                                        _source.TriggerEvent("vorp:Tip", $"Added {steamId} to whitelist", 4000);
-                                    }
-                                    else
-                                    {
-                                        _source.TriggerEvent("vorp:Tip", $"{steamId} Is Whitelisted {steamId}", 4000);
-                                    }
-                                }));
+                                var steamId = args[0].ToString();
+                                Exports["ghmattimysql"].execute("SELECT * FROM whitelist WHERE identifier = ?",
+                                                                new[] { steamId }, new Action<dynamic>(result =>
+                                                                {
+                                                                    if (result.Count == 0)
+                                                                    {
+                                                                        Exports["ghmattimysql"]
+                                                                                .execute("INSERT INTO whitelist (`identifier`) VALUES (?)",
+                                                                                    new object[] { steamId });
+                                                                        LoadUsers._whitelist.Add(steamId);
+                                                                        _source.TriggerEvent("vorp:Tip",
+                                                                            $"Added {steamId} to whitelist", 4000);
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        _source.TriggerEvent("vorp:Tip",
+                                                                            $"{steamId} Is Whitelisted {steamId}",
+                                                                            4000);
+                                                                    }
+                                                                }));
                             }
                             catch
                             {
@@ -267,20 +274,24 @@ namespace vorpcore_sv.Scripts
                 {
                     try
                     {
-                        string steamId = args[0].ToString();
-                        Exports["ghmattimysql"].execute("SELECT * FROM whitelist WHERE identifier = ?", new[] { steamId }, new Action<dynamic>((result) =>
-                        {
-                            if (result.Count == 0)
-                            {
-                                Exports["ghmattimysql"].execute("INSERT INTO whitelist (`identifier`) VALUES (?)", new object[] { steamId });
-                                LoadUsers._whitelist.Add(steamId);
-                                Debug.WriteLine($"Added {steamId} to whitelist", 4000);
-                            }
-                            else
-                            {
-                                Debug.WriteLine($"{steamId} Is Whitelisted {steamId}", 4000);
-                            }
-                        }));
+                        var steamId = args[0].ToString();
+                        Exports["ghmattimysql"].execute("SELECT * FROM whitelist WHERE identifier = ?",
+                                                        new[] { steamId }, new Action<dynamic>(result =>
+                                                        {
+                                                            if (result.Count == 0)
+                                                            {
+                                                                Exports["ghmattimysql"]
+                                                                        .execute("INSERT INTO whitelist (`identifier`) VALUES (?)",
+                                                                            new object[] { steamId });
+                                                                LoadUsers._whitelist.Add(steamId);
+                                                                Debug.WriteLine($"Added {steamId} to whitelist", 4000);
+                                                            }
+                                                            else
+                                                            {
+                                                                Debug.WriteLine($"{steamId} Is Whitelisted {steamId}",
+                                                                                    4000);
+                                                            }
+                                                        }));
                     }
                     catch
                     {

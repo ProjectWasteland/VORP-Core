@@ -1,8 +1,8 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using CitizenFX.Core;
+using CitizenFX.Core.Native;
+using vorpcore_cl.Utils;
 using static CitizenFX.Core.Native.API;
 
 namespace vorpcore_cl.Scripts
@@ -25,7 +25,10 @@ namespace vorpcore_cl.Scripts
         [Tick]
         private async Task KeyIdOnHead()
         {
-            if (!UseIDHeads || !UseKeyMode) { return; }
+            if (!UseIDHeads || !UseKeyMode)
+            {
+                return;
+            }
 
             if (IsControlPressed(0, keyShow))
             {
@@ -35,31 +38,30 @@ namespace vorpcore_cl.Scripts
             {
                 showIds = false;
             }
-            await Delay(10);
 
+            await Delay(10);
         }
 
         [Tick]
         private async Task SetPlayerIdOnHead()
         {
-            if (!UseIDHeads) {
+            if (!UseIDHeads)
+            {
                 await Delay(100);
-                return; 
+                return;
             }
 
-            for (int i = 0; i < 255; i++)
+            for (var i = 0; i < 255; i++)
             {
-
                 if (NetworkIsPlayerActive(i))
                 {
                     if (GetPlayerPed(i) != PlayerPedId())
                     {
-
                         if (PlayerTags.ContainsKey(i))
                         {
                             if (Function.Call<bool>((Hash)0x6E1C31E14C7A5F97, PlayerTags[i]))
                             {
-                                float distanceConfig = Utils.GetConfig.Config["HeadIdDistance"].ToObject<float>();
+                                var distanceConfig = GetConfig.Config["HeadIdDistance"].ToObject<float>();
 
                                 if (GetDistanceFromPlayer(i) < distanceConfig && showIds)
                                 {
@@ -74,7 +76,6 @@ namespace vorpcore_cl.Scripts
                                     //}
 
                                     Function.Call((Hash)0x93171DDDAB274EB8, PlayerTags[i], 2);
-
                                 }
                                 else
                                 {
@@ -83,30 +84,29 @@ namespace vorpcore_cl.Scripts
                             }
                             else
                             {
-
-                                int tagId = Function.Call<int>((Hash)0xD877AF112AD2B41B, i, GetPlayerServerId(i).ToString(), false, false, "", 0);
+                                var tagId = Function.Call<int>((Hash)0xD877AF112AD2B41B, i,
+                                                               GetPlayerServerId(i).ToString(), false, false, "", 0);
                                 PlayerTags[i] = tagId;
                             }
                         }
                         else
                         {
-                            int tagId = Function.Call<int>((Hash)0xD877AF112AD2B41B, i, GetPlayerServerId(i).ToString(), false, false, "", 0);
+                            var tagId = Function.Call<int>((Hash)0xD877AF112AD2B41B, i, GetPlayerServerId(i).ToString(),
+                                                           false, false, "", 0);
                             PlayerTags.Add(i, tagId);
                         }
                     }
-
                 }
-
             }
-
         }
 
         public static float GetDistanceFromPlayer(int p)
         {
-            int playerPedId = GetPlayerPed(p);
-            Vector3 playerCoords = GetEntityCoords(playerPedId, true, true);
-            Vector3 myCoords = GetEntityCoords(PlayerPedId(), true, true);
-            return GetDistanceBetweenCoords(myCoords.X, myCoords.Y, myCoords.Z, playerCoords.X, playerCoords.Y, playerCoords.Z, true);
+            var playerPedId = GetPlayerPed(p);
+            var playerCoords = GetEntityCoords(playerPedId, true, true);
+            var myCoords = GetEntityCoords(PlayerPedId(), true, true);
+            return GetDistanceBetweenCoords(myCoords.X, myCoords.Y, myCoords.Z, playerCoords.X, playerCoords.Y,
+                                            playerCoords.Z, true);
         }
     }
 }

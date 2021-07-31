@@ -1,11 +1,11 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using CitizenFX.Core;
+using CitizenFX.Core.Native;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using vorpcore_sv.Scripts;
 
 namespace vorpcore_sv.Utils
@@ -17,7 +17,7 @@ namespace vorpcore_sv.Utils
         public static Dictionary<string, string> Langs = new Dictionary<string, string>();
         public static string resourcePath = $"{API.GetResourcePath(API.GetCurrentResourceName())}";
 
-        public static bool isConfigLoaded = false;
+        public static bool isConfigLoaded;
 
         public LoadConfig()
         {
@@ -33,7 +33,7 @@ namespace vorpcore_sv.Utils
                 Config = JObject.Parse(ConfigString);
                 if (File.Exists($"{resourcePath}/{Config["defaultlang"]}.json"))
                 {
-                    string langstring = File.ReadAllText($"{resourcePath}/{Config["defaultlang"]}.json", Encoding.UTF8);
+                    var langstring = File.ReadAllText($"{resourcePath}/{Config["defaultlang"]}.json", Encoding.UTF8);
                     Langs = JsonConvert.DeserializeObject<Dictionary<string, string>>(langstring);
                     Debug.WriteLine($"{API.GetCurrentResourceName()}: Language {Config["defaultlang"]}.json loaded!");
                 }
@@ -46,6 +46,7 @@ namespace vorpcore_sv.Utils
             {
                 Debug.WriteLine($"{API.GetCurrentResourceName()}: Config.json Not Found");
             }
+
             isConfigLoaded = true;
             if (Config["Whitelist"].ToObject<bool>() != null)
             {
@@ -59,7 +60,7 @@ namespace vorpcore_sv.Utils
 
         private void LoadWhitelist()
         {
-            Exports["ghmattimysql"].execute("SELECT * FROM whitelist", new[] { "" }, new Action<dynamic>((result) =>
+            Exports["ghmattimysql"].execute("SELECT * FROM whitelist", new[] { "" }, new Action<dynamic>(result =>
             {
                 if (result.Count > 0)
                 {
@@ -71,10 +72,9 @@ namespace vorpcore_sv.Utils
             }));
         }
 
-        private void getConfig([FromSource]Player source)
+        private void getConfig([FromSource] Player source)
         {
             source.TriggerEvent($"{API.GetCurrentResourceName()}:SendConfig", ConfigString, Langs);
         }
     }
-
 }

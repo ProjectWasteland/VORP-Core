@@ -1,20 +1,19 @@
-﻿using CitizenFX.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CitizenFX.Core;
 
 namespace vorpcore_cl.Utils
 {
-    class Callback : BaseScript
+    internal class Callback : BaseScript
     {
         public static List<CallbackDelegate> ServerCallBacks = new List<CallbackDelegate>();
-        public static int RequestId = 0;
+        public static int RequestId;
 
         public Callback()
         {
-            EventHandlers["vorp:ExecuteServerCallBack"] += new Action<string, CallbackDelegate, object>(triggerServerCallBack);
+            EventHandlers["vorp:ExecuteServerCallBack"] +=
+                    new Action<string, CallbackDelegate, object>(triggerServerCallBack);
             EventHandlers["vorp:ServerCallback"] += new Action<int, object>(serverCallback);
         }
 
@@ -29,7 +28,6 @@ namespace vorpcore_cl.Utils
             {
                 Debug.WriteLine("VorpCore: Error Server CallBack Not Found");
             }
-
         }
 
         private void triggerServerCallBack(string name, CallbackDelegate ncb, object args)

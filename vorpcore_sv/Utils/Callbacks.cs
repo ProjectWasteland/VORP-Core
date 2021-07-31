@@ -1,34 +1,34 @@
-﻿using CitizenFX.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CitizenFX.Core;
 
 namespace vorpcore_sv.Utils
 {
-    class Callbacks : BaseScript
+    internal class Callbacks : BaseScript
     {
         public static Dictionary<string, CallbackDelegate> ServerCallBacks = new Dictionary<string, CallbackDelegate>();
 
         public Callbacks()
         {
             EventHandlers["vorp:addNewCallBack"] += new Action<string, CallbackDelegate>(addNewCallBack);
-            EventHandlers["vorp:TriggerServerCallback"] += new Action<Player, string, int, object>(triggerServerCallback);
+            EventHandlers["vorp:TriggerServerCallback"] +=
+                    new Action<Player, string, int, object>(triggerServerCallback);
         }
 
-        public async void triggerServerCallback([FromSource]Player source, string name, int requestId, object args)
+        public async void triggerServerCallback([FromSource] Player source, string name, int requestId, object args)
         {
             try
             {
-                int _source = int.Parse(source.Handle);
+                var _source = int.Parse(source.Handle);
                 await Delay(100);
                 if (ServerCallBacks.ContainsKey(name))
                 {
-                    ServerCallBacks[name](_source, new Action<dynamic>(async (data) =>
-                    {
-                        source.TriggerEvent("vorp:ServerCallback", requestId, data);
-                    }), args);
+                    ServerCallBacks[name](_source,
+                                          new Action<dynamic>(async data =>
+                                          {
+                                              source.TriggerEvent("vorp:ServerCallback", requestId,
+                                                                  data);
+                                          }), args);
                 }
             }
             catch

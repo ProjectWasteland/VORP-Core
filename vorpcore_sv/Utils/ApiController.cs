@@ -1,19 +1,17 @@
-﻿using CitizenFX.Core;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Json;
-using System.Threading.Tasks;
+using CitizenFX.Core;
+using Newtonsoft.Json.Linq;
 using vorpcore_sv.Scripts;
 
 namespace vorpcore_sv.Utils
 {
-    class ApiController : BaseScript
+    internal class ApiController : BaseScript
     {
         public delegate Dictionary<string, dynamic> auxDelegate(int source);
+
         public delegate Dictionary<string, Dictionary<string, dynamic>> getUsersSource();
+
         public ApiController()
         {
             EventHandlers["vorp:getCharacter"] += new Action<int, dynamic>(getCharacter);
@@ -25,29 +23,29 @@ namespace vorpcore_sv.Utils
 
             EventHandlers["vorp:setJob"] += new Action<int, string>(setJob);
             EventHandlers["vorp:setGroup"] += new Action<int, string>(setGroup);
-            EventHandlers["getCore"] += new Action<CallbackDelegate>((cb) =>
+            EventHandlers["getCore"] += new Action<CallbackDelegate>(cb =>
             {
-                Dictionary<string, dynamic> corefunctions = new Dictionary<string, dynamic>
+                var corefunctions = new Dictionary<string, dynamic>
                 {
-                    ["getUser"] = new auxDelegate(getUser),
-                    ["maxCharacters"] = LoadConfig.Config["MaxCharacters"].ToObject<int>(),
-                    ["addRpcCallback"] = new Action<string, CallbackDelegate>((name, callback) =>
-                     {
-                         try
-                         {
-                             Console.ForegroundColor = ConsoleColor.Green;
-                             Console.WriteLine($"Vorp Core: {name} function callback registered!");
-                             Console.ForegroundColor = ConsoleColor.White;
+                        ["getUser"] = new auxDelegate(getUser),
+                        ["maxCharacters"] = LoadConfig.Config["MaxCharacters"].ToObject<int>(),
+                        ["addRpcCallback"] = new Action<string, CallbackDelegate>((name, callback) =>
+                        {
+                            try
+                            {
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine($"Vorp Core: {name} function callback registered!");
+                                Console.ForegroundColor = ConsoleColor.White;
 
-                             Callbacks.ServerCallBacks[name] = callback;
-                         }
-                         catch (Exception e)
-                         {
-                             Debug.WriteLine(e.Message);
-                         }
-                     }),
-                    ["getUsers"] = new getUsersSource(getConnectedUsers),
-                    ["sendLog"] = new Action<string, string>((msg, type) => { LogManager.WriteLog(msg, type); })
+                                Callbacks.ServerCallBacks[name] = callback;
+                            }
+                            catch (Exception e)
+                            {
+                                Debug.WriteLine(e.Message);
+                            }
+                        }),
+                        ["getUsers"] = new getUsersSource(getConnectedUsers),
+                        ["sendLog"] = new Action<string, string>((msg, type) => { LogManager.WriteLog(msg, type); })
                 };
                 cb.Invoke(corefunctions);
             });
@@ -60,31 +58,30 @@ namespace vorpcore_sv.Utils
                 throw new InvalidOperationException($"{nameof(asHelper)} must be true if initialization was intended");
             }
         }
-        
+
         public static Dictionary<string, dynamic> getUser(int source)
         {
-            string steam = "steam:" + new ApiController(true).Players[source].Identifiers["steam"];
+            var steam = "steam:" + new ApiController(true).Players[source].Identifiers["steam"];
             if (LoadUsers._users.ContainsKey(steam))
             {
                 return LoadUsers._users[steam].GetUser();
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         public static Dictionary<string, Dictionary<string, dynamic>> getConnectedUsers()
         {
-            Dictionary<string, Dictionary<string, dynamic>> UsersDictionary = new Dictionary<string, Dictionary<string, dynamic>>();
-            foreach(Player player in new ApiController(true).Players)
+            var UsersDictionary = new Dictionary<string, Dictionary<string, dynamic>>();
+            foreach (var player in new ApiController(true).Players)
             {
-                string steam = "steam:"+player.Identifiers["steam"];
+                var steam = "steam:" + player.Identifiers["steam"];
                 if (LoadUsers._users.ContainsKey(steam) && !UsersDictionary.ContainsKey(steam))
                 {
                     UsersDictionary.Add(steam, LoadUsers._users[steam].GetUser());
                 }
             }
+
             return UsersDictionary;
         }
 
@@ -107,15 +104,14 @@ namespace vorpcore_sv.Utils
 
         private void removeMoney(int handle, int typeCash, double quantity)
         {
-
-            Player player = getSource(handle);
-            string sid = "steam:" + player.Identifiers["steam"];
+            var player = getSource(handle);
+            var sid = "steam:" + player.Identifiers["steam"];
 
             if (LoadUsers._users.ContainsKey(sid))
             {
                 LoadUsers._users[sid].GetUsedCharacter().removeCurrency(typeCash, quantity);
 
-                JObject nuipost = new JObject();
+                var nuipost = new JObject();
                 nuipost.Add("type", "ui");
                 nuipost.Add("action", "update");
                 nuipost.Add("moneyquanty", LoadUsers._users[sid].GetUsedCharacter().Money);
@@ -132,23 +128,19 @@ namespace vorpcore_sv.Utils
                 Console.WriteLine("Warning removeMoney: User not found!");
                 Console.ForegroundColor = ConsoleColor.White;
             }
-
-           
-
         }
 
         private void addMoney(int handle, int typeCash, double quantity)
         {
-          
-            Player player = getSource(handle);
+            var player = getSource(handle);
 
-            string sid = ("steam:" + player.Identifiers["steam"]);
+            var sid = "steam:" + player.Identifiers["steam"];
 
             if (LoadUsers._users.ContainsKey(sid))
             {
                 LoadUsers._users[sid].GetUsedCharacter().addCurrency(typeCash, quantity);
 
-                JObject nuipost = new JObject();
+                var nuipost = new JObject();
                 nuipost.Add("type", "ui");
                 nuipost.Add("action", "update");
                 nuipost.Add("moneyquanty", LoadUsers._users[sid].GetUsedCharacter().Money);
@@ -169,16 +161,15 @@ namespace vorpcore_sv.Utils
 
         private void addXp(int handle, int quantity)
         {
-          
-            Player player = getSource(handle);
+            var player = getSource(handle);
 
-            string sid = ("steam:" + player.Identifiers["steam"]);
+            var sid = "steam:" + player.Identifiers["steam"];
 
             if (LoadUsers._users.ContainsKey(sid))
             {
                 LoadUsers._users[sid].GetUsedCharacter().addXp(quantity);
 
-                JObject nuipost = new JObject();
+                var nuipost = new JObject();
                 nuipost.Add("type", "ui");
                 nuipost.Add("action", "setxp");
                 nuipost.Add("xp", LoadUsers._users[sid].GetUsedCharacter().Xp);
@@ -195,16 +186,15 @@ namespace vorpcore_sv.Utils
 
         private void removeXp(int handle, int quantity)
         {
-            
-            Player player = getSource(handle);
+            var player = getSource(handle);
 
-            string sid = ("steam:" + player.Identifiers["steam"]);
+            var sid = "steam:" + player.Identifiers["steam"];
 
             if (LoadUsers._users.ContainsKey(sid))
             {
                 LoadUsers._users[sid].GetUsedCharacter().removeXp(quantity);
 
-                JObject nuipost = new JObject();
+                var nuipost = new JObject();
                 nuipost.Add("type", "ui");
                 nuipost.Add("action", "setxp");
                 nuipost.Add("xp", LoadUsers._users[sid].GetUsedCharacter().Xp);
@@ -221,10 +211,9 @@ namespace vorpcore_sv.Utils
 
         private void setJob(int handle, string job)
         {
+            var player = getSource(handle);
 
-            Player player = getSource(handle);
-
-            string sid = ("steam:" + player.Identifiers["steam"]);
+            var sid = "steam:" + player.Identifiers["steam"];
 
             if (LoadUsers._users.ContainsKey(sid))
             {
@@ -240,9 +229,9 @@ namespace vorpcore_sv.Utils
 
         private void setGroup(int handle, string group)
         {
-            Player player = getSource(handle);
+            var player = getSource(handle);
 
-            string sid = ("steam:" + player.Identifiers["steam"]);
+            var sid = "steam:" + player.Identifiers["steam"];
 
             if (LoadUsers._users.ContainsKey(sid))
             {
@@ -258,9 +247,9 @@ namespace vorpcore_sv.Utils
 
         private void getCharacter(int handle, dynamic cb)
         {
-            Player player = getSource(handle);
+            var player = getSource(handle);
 
-            string sid = ("steam:" + player.Identifiers["steam"]);
+            var sid = "steam:" + player.Identifiers["steam"];
 
             if (!LoadUsers._users.ContainsKey(sid))
             {

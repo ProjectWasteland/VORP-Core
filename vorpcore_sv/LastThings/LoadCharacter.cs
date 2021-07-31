@@ -1,20 +1,16 @@
-﻿using CitizenFX.Core;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Json;
+using CitizenFX.Core;
+using Newtonsoft.Json.Linq;
 using vorpcore_sv.Class;
-using vorpcore_sv.Utils;
 
 namespace vorpcore_sv.Scripts
 {
     public class LoadCharacter : BaseScript
     {
         public static Dictionary<string, Character> characters = new Dictionary<string, Character>();
-        public static Dictionary<string,User> _users = new Dictionary<string, User>();
-        
+        public static Dictionary<string, User> _users = new Dictionary<string, User>();
+
         public LoadCharacter()
         {
             EventHandlers["vorp:playerSpawn"] += new Action<Player>(PlayerSpawnFunction);
@@ -29,7 +25,7 @@ namespace vorpcore_sv.Scripts
 
         private void PlayerSpawnFunction([FromSource] Player source)
         {
-            string sid = ("steam:" + source.Identifiers["steam"]);
+            var sid = "steam:" + source.Identifiers["steam"];
 
             if (!characters.ContainsKey(sid))
             {
@@ -38,17 +34,17 @@ namespace vorpcore_sv.Scripts
             }
             else
             {
-
-                JObject pos = JObject.Parse(characters[sid].Coords);
+                var pos = JObject.Parse(characters[sid].Coords);
                 if (pos.ContainsKey("x"))
                 {
-                    Vector3 pcoords = new Vector3(pos["x"].ToObject<float>(), pos["y"].ToObject<float>(), pos["z"].ToObject<float>());
-                    source.TriggerEvent("vorp:initPlayer", pcoords, pos["heading"].ToObject<float>(), characters[sid].IsDead);
+                    var pcoords = new Vector3(pos["x"].ToObject<float>(), pos["y"].ToObject<float>(),
+                                              pos["z"].ToObject<float>());
+                    source.TriggerEvent("vorp:initPlayer", pcoords, pos["heading"].ToObject<float>(),
+                                        characters[sid].IsDead);
                 }
 
-
                 // Send Nui Update UI all
-                JObject postUi = new JObject();
+                var postUi = new JObject();
                 postUi.Add("type", "ui");
                 postUi.Add("action", "update");
                 postUi.Add("moneyquanty", characters[sid].Money);
@@ -57,11 +53,8 @@ namespace vorpcore_sv.Scripts
                 postUi.Add("serverId", source.Handle);
                 postUi.Add("xp", characters[sid].Xp);
 
-
                 source.TriggerEvent("vorp:updateUi", postUi.ToString());
             }
-
         }
-
     }
 }

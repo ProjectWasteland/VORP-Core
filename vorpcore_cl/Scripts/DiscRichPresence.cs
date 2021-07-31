@@ -26,6 +26,5 @@ namespace vorpcore_cl.Scripts
         //        //SetDiscordRichPresenceAssetSmallText(GetConfig.Config["DiscordRichPresenceAssetSmallText"].ToString());
         //    }
         //}
-
     }
 }

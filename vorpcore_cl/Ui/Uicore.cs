@@ -1,6 +1,6 @@
-﻿using CitizenFX.Core;
+﻿using System;
+using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using System;
 
 namespace vorpcore_cl.Ui
 {
@@ -20,13 +20,13 @@ namespace vorpcore_cl.Ui
 
         public void showUI(bool active)
         {
-            string jsonpost = "{\"type\": \"ui\",\"action\":\"hide\"}";
+            var jsonpost = "{\"type\": \"ui\",\"action\":\"hide\"}";
             if (active)
             {
                 jsonpost = "{\"type\": \"ui\",\"action\":\"show\"}";
             }
+
             API.SendNuiMessage(jsonpost);
         }
-
     }
 }

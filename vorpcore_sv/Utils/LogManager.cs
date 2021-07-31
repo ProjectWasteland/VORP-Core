@@ -1,19 +1,11 @@
-﻿using CitizenFX.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using CitizenFX.Core;
 
 namespace vorpcore_sv.Utils
 {
     public class LogManager : BaseScript
     {
-        public LogManager()
-        {
-
-        }
-
         public static async Task WriteLog(string msg, string type)
         {
             switch (type)
@@ -39,8 +31,8 @@ namespace vorpcore_sv.Utils
                     Console.WriteLine(msg);
                     break;
             }
+
             Console.ForegroundColor = ConsoleColor.White;
         }
-
     }
 }

@@ -1,63 +1,57 @@
-﻿using CitizenFX.Core;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using CitizenFX.Core;
+using Newtonsoft.Json.Linq;
 
 namespace vorpcore_sv.Class
 {
     //Class for user characters
     public class Character : BaseScript
     {
-        private string identifier;
-        private int charIdentifier;
-        private string group;
-        private string job;
-        private int jobgrade;
-        private string firstname;
-        private string lastname;
-        private string inventory;
-        private string status;
-        private string coords;
-        private string skin;
         private string comps;
 
-        private double money;
-        private double gold;
-        private double rol;
-
-        private int xp;
-
-        private bool isdead;
-
-        private Player userPlayer;
+        private string skin;
         private int source;
 
-        public int Source { set => source = value; }
+        private Player userPlayer;
 
-        public Player PlayerVar {
-            get {
-                return Players[source];
-            } 
+        public int Source
+        {
+            set => source = value;
         }
 
-        public string Identifier { get => identifier; }
-        public int CharIdentifier { get => charIdentifier; set => charIdentifier = value; }
-        public string Group { get => group; }
-        public string Job { get => job; }
-        public int Jobgrade { get => jobgrade; set => jobgrade = value; }
-        public string Firstname { get => firstname; set => firstname = value; }
-        public string Lastname { get => lastname; set => lastname = value; }
-        public string Inventory { get => inventory; set => inventory = value; }
-        public string Status { get => status; set => status = value; }
-        public string Coords { get => coords; set => coords = value; }
-        public double Money { get => money; }
-        public double Gold { get => gold; }
-        public double Rol { get => rol; }
-        public int Xp { get => xp; }
-        public bool IsDead { get => isdead; }
+        public Player PlayerVar => Players[source];
+
+        public string Identifier { get; }
+
+        public int CharIdentifier { get; set; }
+
+        public string Group { get; private set; }
+
+        public string Job { get; private set; }
+
+        public int Jobgrade { get; set; }
+
+        public string Firstname { get; set; }
+
+        public string Lastname { get; set; }
+
+        public string Inventory { get; set; }
+
+        public string Status { get; set; }
+
+        public string Coords { get; set; }
+
+        public double Money { get; private set; }
+
+        public double Gold { get; private set; }
+
+        public double Rol { get; private set; }
+
+        public int Xp { get; private set; }
+
+        public bool IsDead { get; private set; }
 
         public string Skin
         {
@@ -65,90 +59,99 @@ namespace vorpcore_sv.Class
             set
             {
                 skin = value;
-                Exports["ghmattimysql"].execute("UPDATE characters SET `skinPlayer` = ? WHERE `identifier` = ? AND `charidentifier` = ?", new object[] { value, Identifier,CharIdentifier });
+                Exports["ghmattimysql"]
+                        .execute("UPDATE characters SET `skinPlayer` = ? WHERE `identifier` = ? AND `charidentifier` = ?",
+                                 new object[] { value, Identifier, CharIdentifier });
             }
         }
-        
+
         public string Comps
         {
             get => comps;
             set
             {
                 comps = value;
-                Exports["ghmattimysql"].execute("UPDATE characters SET `compPlayer` = ? WHERE `identifier` = ? AND `charidentifier` = ?", new object[] { value, Identifier,CharIdentifier });
+                Exports["ghmattimysql"]
+                        .execute("UPDATE characters SET `compPlayer` = ? WHERE `identifier` = ? AND `charidentifier` = ?",
+                                 new object[] { value, Identifier, CharIdentifier });
             }
         }
 
         public Character(string identifier)
         {
-            this.identifier = identifier;
-            this.job = "unemployed";
-            this.group = "user";
-            this.inventory = "{}";
+            Identifier = identifier;
+            Job = "unemployed";
+            Group = "user";
+            Inventory = "{}";
         }
 
-        public Character(string identifier, int charIdentifier ,string group, string job, int jobgrade, string firstname, string lastname, string inventory, string status, string coords, double money, double gold, double rol, int xp, bool isdead,string skin,string comps)
+        public Character(string identifier, int charIdentifier, string group, string job, int jobgrade,
+                         string firstname, string lastname, string inventory, string status, string coords,
+                         double money, double gold, double rol, int xp, bool isdead, string skin, string comps)
         {
-            this.identifier = identifier;
-            this.charIdentifier = charIdentifier;
-            this.group = group;
-            this.job = job;
-            this.jobgrade = jobgrade;
-            this.firstname = firstname;
-            this.lastname = lastname;
-            this.inventory = inventory;
-            this.status = status;
-            this.coords = coords;
-            this.money = money;
-            this.gold = gold;
-            this.rol = rol;
-            this.xp = xp;
-            this.isdead = isdead;
+            Identifier = identifier;
+            CharIdentifier = charIdentifier;
+            Group = group;
+            Job = job;
+            Jobgrade = jobgrade;
+            Firstname = firstname;
+            Lastname = lastname;
+            Inventory = inventory;
+            Status = status;
+            Coords = coords;
+            Money = money;
+            Gold = gold;
+            Rol = rol;
+            Xp = xp;
+            IsDead = isdead;
             this.skin = skin;
             this.comps = comps;
         }
 
-        public Character(string identifier, string group, string job, int jobgrade, string firstname, string lastname, string inventory, string status, string coords, double money, double gold, double rol, int xp, bool isdead, string skin, string comps)
+        public Character(string identifier, string group, string job, int jobgrade, string firstname, string lastname,
+                         string inventory, string status, string coords, double money, double gold, double rol, int xp,
+                         bool isdead, string skin, string comps)
         {
-            this.identifier = identifier;
-            this.group = group;
-            this.job = job;
-            this.jobgrade = jobgrade;
-            this.firstname = firstname;
-            this.lastname = lastname;
-            this.inventory = inventory;
-            this.status = status;
-            this.coords = coords;
-            this.money = money;
-            this.gold = gold;
-            this.rol = rol;
-            this.xp = xp;
-            this.isdead = isdead;
+            Identifier = identifier;
+            Group = group;
+            Job = job;
+            Jobgrade = jobgrade;
+            Firstname = firstname;
+            Lastname = lastname;
+            Inventory = inventory;
+            Status = status;
+            Coords = coords;
+            Money = money;
+            Gold = gold;
+            Rol = rol;
+            Xp = xp;
+            IsDead = isdead;
             this.skin = skin;
             this.comps = comps;
         }
 
         public Dictionary<string, dynamic> getCharacter()
         {
-            Dictionary<string, dynamic> userData = new Dictionary<string,dynamic>();
-            userData.Add("identifier", identifier);
-            userData.Add("charIdentifier", charIdentifier);
-            userData.Add("group", group);
-            userData.Add("job", job);
-            userData.Add("jobGrade", jobgrade);
-            userData.Add("money", money);
-            userData.Add("gold", gold);
-            userData.Add("rol", rol);
-            userData.Add("xp", xp);
-            userData.Add("firstname", firstname);
-            userData.Add("lastname", lastname);
-            userData.Add("inventory", inventory);
-            userData.Add("status", status);
-            userData.Add("coords", coords);
-            userData.Add("isdead", isdead);
-            userData.Add("skin",skin);
+            var userData = new Dictionary<string, dynamic>();
+            userData.Add("identifier", Identifier);
+            userData.Add("charIdentifier", CharIdentifier);
+            userData.Add("group", Group);
+            userData.Add("job", Job);
+            userData.Add("jobGrade", Jobgrade);
+            userData.Add("money", Money);
+            userData.Add("gold", Gold);
+            userData.Add("rol", Rol);
+            userData.Add("xp", Xp);
+            userData.Add("firstname", Firstname);
+            userData.Add("lastname", Lastname);
+            userData.Add("inventory", Inventory);
+            userData.Add("status", Status);
+            userData.Add("coords", Coords);
+            userData.Add("isdead", IsDead);
+            userData.Add("skin", skin);
             userData.Add("comps", comps);
-            userData.Add("setStatus", new Action<string>((status) => {
+            userData.Add("setStatus", new Action<string>(status =>
+            {
                 try
                 {
                     Status = status;
@@ -158,43 +161,44 @@ namespace vorpcore_sv.Class
                     Debug.WriteLine(e.Message);
                 }
             }));
-            userData.Add("setJobGrade",new Action<int>((jobgrade)=> {
+            userData.Add("setJobGrade", new Action<int>(jobgrade =>
+            {
                 try
                 {
                     Jobgrade = jobgrade;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Debug.WriteLine(e.Message);
                 }
             }));
-            userData.Add("setGroup", new Action<string>((g) =>
+            userData.Add("setGroup", new Action<string>(g =>
             {
                 try
                 {
-                    group = g;
-                }
-                catch(Exception e)
-                {
-                    Debug.WriteLine(e.Message);
-                }
-            }));
-            userData.Add("setJob", new Action<string>((j) =>
-            {
-                try
-                {
-                    job = j;
+                    Group = g;
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.Message);
-                }     
+                }
             }));
-            userData.Add("setMoney", new Action<double>((m) =>
+            userData.Add("setJob", new Action<string>(j =>
             {
                 try
                 {
-                    money = m;
+                    Job = j;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                }
+            }));
+            userData.Add("setMoney", new Action<double>(m =>
+            {
+                try
+                {
+                    Money = m;
                     updateCharUi();
                 }
                 catch (Exception e)
@@ -202,11 +206,11 @@ namespace vorpcore_sv.Class
                     Debug.WriteLine(e.Message);
                 }
             }));
-            userData.Add("setGold", new Action<double>((g) =>
+            userData.Add("setGold", new Action<double>(g =>
             {
                 try
                 {
-                    gold = g;
+                    Gold = g;
                     updateCharUi();
                 }
                 catch (Exception e)
@@ -214,24 +218,11 @@ namespace vorpcore_sv.Class
                     Debug.WriteLine(e.Message);
                 }
             }));
-            userData.Add("setRol", new Action<double>((r) =>
+            userData.Add("setRol", new Action<double>(r =>
             {
                 try
                 {
-                    rol = r;
-                    updateCharUi();
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e.Message);
-                }
-
-            }));
-            userData.Add("setXp", new Action<int>((x) =>
-            {
-                try
-                {
-                    xp = x;
+                    Rol = r;
                     updateCharUi();
                 }
                 catch (Exception e)
@@ -239,29 +230,41 @@ namespace vorpcore_sv.Class
                     Debug.WriteLine(e.Message);
                 }
             }));
-            userData.Add("setFirstname", new Action<string>((f) =>
+            userData.Add("setXp", new Action<int>(x =>
             {
                 try
                 {
-                    firstname = f;
+                    Xp = x;
+                    updateCharUi();
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.Message);
                 }
             }));
-            userData.Add("setLastname", new Action<string>((l) =>
+            userData.Add("setFirstname", new Action<string>(f =>
             {
                 try
                 {
-                    lastname = l;
+                    Firstname = f;
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.Message);
                 }
             }));
-            userData.Add("updateSkin",new Action<string>((nskin) =>
+            userData.Add("setLastname", new Action<string>(l =>
+            {
+                try
+                {
+                    Lastname = l;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                }
+            }));
+            userData.Add("updateSkin", new Action<string>(nskin =>
             {
                 try
                 {
@@ -272,7 +275,7 @@ namespace vorpcore_sv.Class
                     Debug.WriteLine(e.Message);
                 }
             }));
-            userData.Add("updateComps",new Action<string>((ncomps) =>
+            userData.Add("updateComps", new Action<string>(ncomps =>
             {
                 try
                 {
@@ -283,7 +286,8 @@ namespace vorpcore_sv.Class
                     Debug.WriteLine(e.Message);
                 }
             }));
-            userData.Add("addCurrency", new Action<int, double>((currency,quantity) => {             
+            userData.Add("addCurrency", new Action<int, double>((currency, quantity) =>
+            {
                 try
                 {
                     addCurrency(currency, quantity);
@@ -293,7 +297,8 @@ namespace vorpcore_sv.Class
                     Debug.WriteLine(e.Message);
                 }
             }));
-            userData.Add("removeCurrency", new Action<int, double>((currency,quantity) => {
+            userData.Add("removeCurrency", new Action<int, double>((currency, quantity) =>
+            {
                 try
                 {
                     removeCurrency(currency, quantity);
@@ -303,7 +308,8 @@ namespace vorpcore_sv.Class
                     Debug.WriteLine(e.Message);
                 }
             }));
-            userData.Add("addXp", new Action<int>((xp) => {
+            userData.Add("addXp", new Action<int>(xp =>
+            {
                 try
                 {
                     addXp(xp);
@@ -313,7 +319,8 @@ namespace vorpcore_sv.Class
                     Debug.WriteLine(e.Message);
                 }
             }));
-            userData.Add("removeXp", new Action<int>((xp) => {
+            userData.Add("removeXp", new Action<int>(xp =>
+            {
                 try
                 {
                     removeXp(xp);
@@ -328,14 +335,14 @@ namespace vorpcore_sv.Class
 
         public void updateCharUi()
         {
-            JObject nuipost = new JObject();
+            var nuipost = new JObject();
             nuipost.Add("type", "ui");
             nuipost.Add("action", "update");
             nuipost.Add("moneyquanty", Money);
             nuipost.Add("goldquanty", Gold);
             nuipost.Add("rolquanty", Rol);
             nuipost.Add("xp", Xp);
-            nuipost.Add("serverId",source.ToString());
+            nuipost.Add("serverId", source.ToString());
 
             PlayerVar.TriggerEvent("vorp:updateUi", nuipost.ToString());
         }
@@ -345,18 +352,19 @@ namespace vorpcore_sv.Class
             switch (currency)
             {
                 case 0:
-                    money += quantity;
+                    Money += quantity;
                     //Exports["ghmattimysql"].execute($"UPDATE characters SET money=money + ? WHERE identifier=?", new object[] { quantity, identifier });
                     break;
                 case 1:
-                    gold += quantity;
+                    Gold += quantity;
                     //Exports["ghmattimysql"].execute($"UPDATE characters SET gold=gold + ? WHERE identifier=?", new object[] { quantity, identifier });
                     break;
                 case 2:
-                    rol += quantity;
+                    Rol += quantity;
                     //Exports["ghmattimysql"].execute($"UPDATE characters SET rol=rol + ? WHERE identifier=?", new object[] { quantity, identifier });
                     break;
             }
+
             updateCharUi();
         }
 
@@ -365,75 +373,91 @@ namespace vorpcore_sv.Class
             switch (currency)
             {
                 case 0:
-                    money -= quantity;
+                    Money -= quantity;
                     //Exports["ghmattimysql"].execute($"UPDATE characters SET money=money - ? WHERE identifier=?", new object[] { quantity, identifier });
                     break;
                 case 1:
-                    gold -= quantity;
+                    Gold -= quantity;
                     //Exports["ghmattimysql"].execute($"UPDATE characters SET gold=gold - ? WHERE identifier=?", new object[] { quantity, identifier });
                     break;
                 case 2:
-                    rol -= quantity;
+                    Rol -= quantity;
                     //Exports["ghmattimysql"].execute($"UPDATE characters SET rol=rol - ? WHERE identifier=?", new object[] { quantity, identifier });
                     break;
             }
+
             updateCharUi();
         }
 
         public void addXp(int quantity)
         {
-            xp += quantity;
+            Xp += quantity;
             //Exports["ghmattimysql"].execute($"UPDATE characters SET xp=xp + ? WHERE identifier=?", new object[] { quantity, identifier });
             updateCharUi();
         }
 
         public void removeXp(int quantity)
         {
-            xp -= quantity;
+            Xp -= quantity;
             //Exports["ghmattimysql"].execute($"UPDATE characters SET xp=xp - ? WHERE identifier=?", new object[] { quantity, identifier });
             updateCharUi();
         }
 
         public void setJob(string newjob)
         {
-            job = newjob;
+            Job = newjob;
             //Exports["ghmattimysql"].execute($"UPDATE characters SET job=? WHERE identifier=?", new string[] { newjob, identifier });
         }
 
         public void setGroup(string newgroup)
         {
-            group = newgroup;
+            Group = newgroup;
             //Exports["ghmattimysql"].execute($"UPDATE characters SET `group`=? WHERE identifier=?", new string[] { newgroup.ToString(), identifier });
         }
 
         public void setDead(bool dead)
         {
-            isdead = dead;
+            IsDead = dead;
             //int intdead = dead ? 1 : 0;
             //Exports["ghmattimysql"].execute("UPDATE characters SET `isdead` = ? WHERE `identifier` = ?", new object[] { intdead, identifier });
         }
 
         public async Task<int> SaveNewCharacterInDb()
         {
-            dynamic character = await Exports["ghmattimysql"].executeSync("INSERT INTO characters(`identifier`,`group`,`money`,`gold`,`rol`,`xp`,`inventory`,`job`,`status`,`firstname`,`lastname`,`skinPlayer`,`compPlayer`,`jobgrade`,`coords`,`isdead`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", new object[] { identifier, group, money, gold, rol, xp, inventory, job, status, firstname, lastname, skin, comps, jobgrade, coords, isdead ? 1 : 0 });
+            var character = await Exports["ghmattimysql"]
+                    .executeSync("INSERT INTO characters(`identifier`,`group`,`money`,`gold`,`rol`,`xp`,`inventory`,`job`,`status`,`firstname`,`lastname`,`skinPlayer`,`compPlayer`,`jobgrade`,`coords`,`isdead`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                                 new object[]
+                                 {
+                                         Identifier, Group, Money, Gold, Rol, Xp, Inventory, Job, Status, Firstname,
+                                         Lastname, skin, comps, Jobgrade, Coords, IsDead ? 1 : 0
+                                 });
             CharIdentifier = (int)character.insertId;
             return (int)character.insertId;
         }
 
         public void DeleteCharacter()
         {
-            Exports["ghmattimysql"].execute("DELETE FROM characters WHERE `identifier` = ? AND `charidentifier` = ? ", new object[] {Identifier,CharIdentifier });
+            Exports["ghmattimysql"].execute("DELETE FROM characters WHERE `identifier` = ? AND `charidentifier` = ? ",
+                                            new object[] { Identifier, CharIdentifier });
         }
 
         public void SaveCharacterCoords(string coords)
         {
             Coords = coords;
-            Exports["ghmattimysql"].execute("UPDATE characters SET `coords` = ? WHERE `identifier` = ? AND `charidentifier` = ?", new object[] {coords, Identifier, CharIdentifier });
+            Exports["ghmattimysql"]
+                    .execute("UPDATE characters SET `coords` = ? WHERE `identifier` = ? AND `charidentifier` = ?",
+                             new object[] { coords, Identifier, CharIdentifier });
         }
 
         public void SaveCharacterInDb()
         {
-            Exports["ghmattimysql"].execute("UPDATE characters SET `group` = ?,`money` = ?,`gold` = ?,`rol` = ?,`xp` = ?,`job` = ?, `status` = ?,`firstname` = ?, `lastname` = ?, `jobgrade` = ?,`coords` = ?,`isdead` = ? WHERE `identifier` = ? AND `charidentifier` = ?", new object[] {group,money,gold,rol,xp,job,status,firstname,lastname,jobgrade,coords,isdead ? 1 : 0,identifier,charIdentifier });
+            Exports["ghmattimysql"]
+                    .execute("UPDATE characters SET `group` = ?,`money` = ?,`gold` = ?,`rol` = ?,`xp` = ?,`job` = ?, `status` = ?,`firstname` = ?, `lastname` = ?, `jobgrade` = ?,`coords` = ?,`isdead` = ? WHERE `identifier` = ? AND `charidentifier` = ?",
+                             new object[]
+                             {
+                                     Group, Money, Gold, Rol, Xp, Job, Status, Firstname, Lastname, Jobgrade, Coords,
+                                     IsDead ? 1 : 0, Identifier, CharIdentifier
+                             });
         }
     }
 }

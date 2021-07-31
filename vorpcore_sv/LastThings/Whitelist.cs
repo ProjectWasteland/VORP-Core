@@ -1,16 +1,14 @@
-﻿using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
+using System.Threading;
 using System.Threading.Tasks;
-using vorpcore_sv.Utils;
+using CitizenFX.Core;
 using vorpcore_sv.Class;
-using vorpcore_sv.Scripts;
+using vorpcore_sv.Utils;
 
 namespace vorpcore_sv.Scripts
 {
-    class Whitelist : BaseScript
+    internal class Whitelist : BaseScript
     {
         public static bool whitelistActive;
 
@@ -26,7 +24,7 @@ namespace vorpcore_sv.Scripts
         public async Task LoadWhitelist()
         {
             await Delay(5000);
-            Exports["ghmattimysql"].execute("SELECT * FROM whitelist", new[] { "" }, new Action<dynamic>((result) =>
+            Exports["ghmattimysql"].execute("SELECT * FROM whitelist", new[] { "" }, new Action<dynamic>(result =>
             {
                 if (result.Count > 0)
                 {
@@ -35,7 +33,6 @@ namespace vorpcore_sv.Scripts
                         whitelist.Add(r.identifier);
                     }
                 }
-
             }));
         }
 
@@ -43,30 +40,30 @@ namespace vorpcore_sv.Scripts
         {
             var startTimeSpan = TimeSpan.FromMinutes(10);
             var periodTimeSpan = TimeSpan.FromMinutes(5);
-            var timer = new System.Threading.Timer((e) =>
+            var timer = new Timer(e =>
             {
                 if (LoadConfig.isConfigLoaded && LoadConfig.Config["AllowWhitelistAutoUpdate"].ToObject<bool>())
                 {
-                    Exports["ghmattimysql"].execute("SELECT * FROM whitelist", new[] {""}, new Action<dynamic>(
-                        (result) =>
-                        {
-                            if (result.Count > 0)
-                            {
-                                var whitelistToReplace = new List<string>();
-                                foreach (var r in result)
-                                {
-                                    whitelistToReplace.Add(r.identifier);
-                                }
+                    Exports["ghmattimysql"].execute("SELECT * FROM whitelist", new[] { "" }, new Action<dynamic>(
+                     result =>
+                     {
+                         if (result.Count > 0)
+                         {
+                             var whitelistToReplace = new List<string>();
+                             foreach (var r in result)
+                             {
+                                 whitelistToReplace.Add(r.identifier);
+                             }
 
-                                whitelist = whitelistToReplace;
-                            }
-                        }));
+                             whitelist = whitelistToReplace;
+                         }
+                     }));
                 }
             }, null, startTimeSpan, periodTimeSpan);
         }
-        
+
         private async void OnPlayerConnecting([FromSource] Player player, string playerName, dynamic setKickReason,
-            dynamic deferrals)
+                                              dynamic deferrals)
         {
             deferrals.defer();
 
@@ -108,21 +105,38 @@ namespace vorpcore_sv.Scripts
 
             Debug.WriteLine($"{playerName} is connecting with (Identifier: [{steamIdentifier}])");
 
-            string sid = "steam:" + steamIdentifier;
+            var sid = "steam:" + steamIdentifier;
             Debug.WriteLine(sid);
-            Exports["ghmattimysql"].execute("SELECT * FROM characters WHERE identifier LIKE ?", new string[] { sid.ToString() }, new Action<dynamic>((result) =>
-            {
-                Debug.WriteLine(result.Count.ToString());
-                if (result.Count != 0)
-                {
-                    string inventory = "{}";
-                    if (!String.IsNullOrEmpty(result[0].inventory))
-                    {
-                        inventory = result[0].inventory;
-                    }
-                    LoadCharacter.characters[sid] = new Character(sid, result[0].group.ToString(), result[0].job.ToString(), result[0].jobgrade.ToString(), result[0].firstname.ToString(), result[0].lastname.ToString(), inventory, result[0].status.ToString(), result[0].coords.ToString(), double.Parse(result[0].money.ToString()), double.Parse(result[0].gold.ToString()), double.Parse(result[0].rol.ToString()), int.Parse(result[0].xp.ToString()), Convert.ToBoolean(result[0].isdead.ToString()), result[0].skin.ToString(), result[0].comps.ToString());
-                }
-            }));
+            Exports["ghmattimysql"].execute("SELECT * FROM characters WHERE identifier LIKE ?", new[] { sid },
+                                            new Action<dynamic>(result =>
+                                            {
+                                                Debug.WriteLine(result.Count.ToString());
+                                                if (result.Count != 0)
+                                                {
+                                                    var inventory = "{}";
+                                                    if (!string.IsNullOrEmpty(result[0].inventory))
+                                                    {
+                                                        inventory = result[0].inventory;
+                                                    }
+
+                                                    LoadCharacter.characters[sid] =
+                                                            new Character(sid, result[0].group.ToString(),
+                                                                          result[0].job.ToString(),
+                                                                          result[0].jobgrade.ToString(),
+                                                                          result[0].firstname.ToString(),
+                                                                          result[0].lastname.ToString(), inventory,
+                                                                          result[0].status.ToString(),
+                                                                          result[0].coords.ToString(),
+                                                                          double.Parse(result[0].money.ToString()),
+                                                                          double.Parse(result[0].gold.ToString()),
+                                                                          double.Parse(result[0].rol.ToString()),
+                                                                          int.Parse(result[0].xp.ToString()),
+                                                                          Convert.ToBoolean(result[0].isdead
+                                                                                  .ToString()),
+                                                                          result[0].skin.ToString(),
+                                                                          result[0].comps.ToString());
+                                                }
+                                            }));
         }
     }
 }

@@ -1,28 +1,27 @@
-﻿using CitizenFX.Core;
+﻿using System;
+using System.Collections.Generic;
+using CitizenFX.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using vorpcore_sv.Scripts;
 
 namespace vorpcore_sv.Utils
 {
     public class SaveCoordsDB : BaseScript
     {
-        public static Dictionary<Player, Tuple<Vector3, float>> LastCoordsInCache = new Dictionary<Player, Tuple<Vector3, float>>();
+        public static Dictionary<Player, Tuple<Vector3, float>> LastCoordsInCache =
+                new Dictionary<Player, Tuple<Vector3, float>>();
+
         public SaveCoordsDB()
         {
             EventHandlers["vorp:saveLastCoords"] += new Action<Player, Vector3, float>(SaveLastCoords);
 
             EventHandlers["vorp:ImDead"] += new Action<Player, bool>(OnPlayerDead);
-
         }
 
-        private void OnPlayerDead([FromSource]Player player, bool isDead)
+        private void OnPlayerDead([FromSource] Player player, bool isDead)
         {
-            string sid = ("steam:" + player.Identifiers["steam"]);
+            var sid = "steam:" + player.Identifiers["steam"];
 
             if (LoadUsers._users.ContainsKey(sid))
             {
@@ -30,25 +29,23 @@ namespace vorpcore_sv.Utils
             }
         }
 
-       
-
         private void SaveLastCoords([FromSource] Player source, Vector3 lastCoords, float lastHeading)
         {
             try
             {
-                string sid = "steam:" + source.Identifiers["steam"];
+                var sid = "steam:" + source.Identifiers["steam"];
                 LastCoordsInCache[source] = new Tuple<Vector3, float>(lastCoords, lastHeading);
-                JObject characterCoords = new JObject()
-            {
-                { "x", lastCoords.X },
-                { "y", lastCoords.Y },
-                { "z", lastCoords.Z },
-                { "heading", lastHeading }
-            };
+                var characterCoords = new JObject
+                {
+                        { "x", lastCoords.X },
+                        { "y", lastCoords.Y },
+                        { "z", lastCoords.Z },
+                        { "heading", lastHeading }
+                };
 
                 LoadUsers._users[sid].GetUsedCharacter().Coords = JsonConvert.SerializeObject(characterCoords);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
             }
@@ -75,7 +72,6 @@ namespace vorpcore_sv.Utils
         //                { "heading", lastHeading }
         //            };
 
-
         //            string pos = JsonConvert.SerializeObject(characterCoords); //JsonConvert.SerializeObject(characterCoords);
 
         //            LoadUsers._users[sid].GetUsedCharacter().SaveCharacterCoords(JsonConvert.SerializeObject(characterCoords));
@@ -84,8 +80,5 @@ namespace vorpcore_sv.Utils
         //    }
         //    await Delay(1000);
         //}
-
-
-
     }
 }

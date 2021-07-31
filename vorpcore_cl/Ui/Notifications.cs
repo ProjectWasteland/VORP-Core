@@ -1,12 +1,6 @@
-﻿using CitizenFX.Core;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using CitizenFX.Core;
+using vorpcore_cl.Utils;
 
 namespace vorpcore_cl.Ui
 {
@@ -19,12 +13,14 @@ namespace vorpcore_cl.Ui
             EventHandlers["vorp:TipRight"] += new Action<string, int>(notifyDisplayRightTip);
             EventHandlers["vorp:TipBottom"] += new Action<string, int>(notifyDisplayObjetive);
             EventHandlers["vorp:NotifyTop"] += new Action<string, string, int>(notifyDisplayTopCenterNotification);
-            EventHandlers["vorp:NotifyLeft"] += new Action<string, string, string, string, int>(notifyDisplayLeftNotification);
+            EventHandlers["vorp:NotifyLeft"] +=
+                    new Action<string, string, string, string, int>(notifyDisplayLeftNotification);
         }
 
-        private async void notifyDisplayLeftNotification(string title, string text, string dic, string icon, int miliseconds)
+        private async void notifyDisplayLeftNotification(string title, string text, string dic, string icon,
+                                                         int miliseconds)
         {
-            await Utils.Miscellanea.LoadTexture(dic);
+            await Miscellanea.LoadTexture(dic);
 
             Exports["vorp_core"].DisplayLeftNotification(title, text, dic, icon, miliseconds);
         }
